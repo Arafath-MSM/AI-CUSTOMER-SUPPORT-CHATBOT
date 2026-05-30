@@ -48,3 +48,9 @@ class KnowledgeSummaryResponse(BaseModel):
     company_id: str
     documents: list[KnowledgeDocumentSummary]
     total_chunks: int
+
+
+class KnowledgeDeleteResponse(BaseModel):
+    document_id: str
+    deleted: bool
+    chunks_deleted: int

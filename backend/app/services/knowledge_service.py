@@ -12,6 +12,7 @@ from openai import APIError, APITimeoutError, AsyncOpenAI
 
 from app.core.config import settings
 from app.schemas.knowledge import (
+    KnowledgeDeleteResponse,
     KnowledgeDocumentSummary,
     KnowledgeMatch,
     KnowledgeQueryResponse,
@@ -143,6 +144,43 @@ def list_knowledge_documents(company_id: str) -> KnowledgeSummaryResponse:
         company_id=company_id,
         documents=documents,
         total_chunks=total_chunks,
+    )
+
+
+def delete_knowledge_document(document_id: str) -> KnowledgeDeleteResponse:
+    store = _read_store()
+    matching_documents = [
+        document
+        for document in store["documents"]
+        if document.get("document_id") == document_id
+    ]
+
+    if not matching_documents:
+        return KnowledgeDeleteResponse(
+            document_id=document_id,
+            deleted=False,
+            chunks_deleted=0,
+        )
+
+    original_chunk_count = len(store["chunks"])
+    store["documents"] = [
+        document
+        for document in store["documents"]
+        if document.get("document_id") != document_id
+    ]
+    store["chunks"] = [
+        chunk
+        for chunk in store["chunks"]
+        if chunk.get("document_id") != document_id
+    ]
+    chunks_deleted = original_chunk_count - len(store["chunks"])
+
+    _write_store(store)
+
+    return KnowledgeDeleteResponse(
+        document_id=document_id,
+        deleted=True,
+        chunks_deleted=chunks_deleted,
     )
 
 

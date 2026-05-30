@@ -5,6 +5,7 @@ from fastapi import APIRouter, File, Form, HTTPException, Query, UploadFile, sta
 from pypdf import PdfReader
 
 from app.schemas.knowledge import (
+    KnowledgeDeleteResponse,
     KnowledgeQueryRequest,
     KnowledgeQueryResponse,
     KnowledgeSummaryResponse,
@@ -13,6 +14,7 @@ from app.schemas.knowledge import (
 )
 from app.services.knowledge_service import (
     KnowledgeBaseError,
+    delete_knowledge_document,
     index_text_document,
     list_knowledge_documents,
     query_knowledge_base,
@@ -83,6 +85,20 @@ async def knowledge_summary(
     company_id: str = Query(default="default", min_length=1, max_length=100),
 ) -> KnowledgeSummaryResponse:
     return list_knowledge_documents(company_id)
+
+
+@router.delete("/knowledge/{document_id}", response_model=KnowledgeDeleteResponse)
+async def delete_knowledge(
+    document_id: str,
+) -> KnowledgeDeleteResponse:
+    result = delete_knowledge_document(document_id)
+    if not result.deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Knowledge document not found.",
+        )
+
+    return result
 
 
 def _extract_text(filename: str, contents: bytes) -> str:

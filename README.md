@@ -55,6 +55,10 @@ Demo page:
 
 - `http://127.0.0.1:8000/static/demo/index.html`
 
+Admin dashboard:
+
+- `http://127.0.0.1:8000/static/admin/index.html`
+
 Embed script:
 
 ```html
