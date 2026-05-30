@@ -1,8 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import truststore
 
 from app.api.routes import chat, health
 from app.core.config import settings
+
+truststore.inject_into_ssl()
 
 
 def create_app() -> FastAPI:
