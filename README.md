@@ -41,3 +41,10 @@ Then open:
 - API: `http://127.0.0.1:8000`
 - Docs: `http://127.0.0.1:8000/docs`
 - Health: `http://127.0.0.1:8000/api/health`
+
+## RAG MVP Endpoints
+
+- `POST /api/knowledge/text` indexes raw text content.
+- `POST /api/upload` indexes `.txt`, `.md`, `.csv`, `.json`, `.html`, or `.pdf` files.
+- `POST /api/query` retrieves the most relevant knowledge chunks.
+- `POST /api/chat` answers with retrieved company context when available.

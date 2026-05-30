@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import truststore
 
-from app.api.routes import chat, health
+from app.api.routes import chat, health, knowledge
 from app.core.config import settings
 
 truststore.inject_into_ssl()
@@ -25,6 +25,7 @@ def create_app() -> FastAPI:
 
     app.include_router(health.router, prefix=settings.api_prefix, tags=["health"])
     app.include_router(chat.router, prefix=settings.api_prefix, tags=["chat"])
+    app.include_router(knowledge.router, prefix=settings.api_prefix, tags=["knowledge"])
 
     @app.get("/", tags=["root"])
     async def root() -> dict[str, str]:

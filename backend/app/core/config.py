@@ -17,8 +17,13 @@ class Settings(BaseSettings):
     )
     openai_api_key: str | None = None
     openai_model: str = "gpt-5.5"
+    openai_embedding_model: str = "text-embedding-3-small"
     openai_max_output_tokens: int = 500
     openai_timeout_seconds: float = 30.0
+    rag_top_k: int = 4
+    rag_chunk_size: int = 900
+    rag_chunk_overlap: int = 150
+    knowledge_store_path: Path = BACKEND_DIR / "storage" / "knowledge_base.json"
 
     model_config = SettingsConfigDict(
         env_file=ENV_FILE,
