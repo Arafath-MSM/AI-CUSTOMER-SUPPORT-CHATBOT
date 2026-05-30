@@ -29,9 +29,15 @@ pip install -r backend\requirements.txt
 uvicorn app.main:app --reload --app-dir backend
 ```
 
+To enable live AI answers, create `backend\.env` from `backend\.env.example` and set:
+
+```powershell
+OPENAI_API_KEY="your_api_key_here"
+OPENAI_MODEL="gpt-5.5"
+```
+
 Then open:
 
 - API: `http://127.0.0.1:8000`
 - Docs: `http://127.0.0.1:8000/docs`
 - Health: `http://127.0.0.1:8000/api/health`
-

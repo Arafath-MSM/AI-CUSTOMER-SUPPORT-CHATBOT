@@ -11,3 +11,4 @@ class ChatResponse(BaseModel):
     answer: str
     source: str
     conversation_id: str | None = None
+    model: str | None = None
