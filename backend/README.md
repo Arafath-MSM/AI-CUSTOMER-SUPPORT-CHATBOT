@@ -10,6 +10,8 @@ FastAPI backend for the AI Customer Support Chatbot SaaS project.
 - `POST /api/upload` indexes supported text/PDF files.
 - `POST /api/query` retrieves top matching knowledge chunks.
 - `GET /api/knowledge?company_id=default` lists indexed documents.
+- `GET /static/widget/chatbot.js` serves the embeddable website widget.
+- `GET /static/demo/index.html` serves a demo storefront using the widget.
 
 Without `OPENAI_API_KEY`, the chat endpoint returns a local development fallback so the API remains testable.
 

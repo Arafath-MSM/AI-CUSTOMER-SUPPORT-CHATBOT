@@ -48,3 +48,20 @@ Then open:
 - `POST /api/upload` indexes `.txt`, `.md`, `.csv`, `.json`, `.html`, or `.pdf` files.
 - `POST /api/query` retrieves the most relevant knowledge chunks.
 - `POST /api/chat` answers with retrieved company context when available.
+
+## Website Widget
+
+Demo page:
+
+- `http://127.0.0.1:8000/static/demo/index.html`
+
+Embed script:
+
+```html
+<script
+  src="http://127.0.0.1:8000/static/widget/chatbot.js"
+  data-api-base-url="http://127.0.0.1:8000"
+  data-company-id="demo-company"
+  data-title="Demo Store Support"
+></script>
+```
