@@ -70,6 +70,16 @@ Admin dashboard:
 
 The local development admin token defaults to `dev-admin-token`. Change `ADMIN_API_TOKEN` before deployment.
 
+## Deployment
+
+Docker Compose is included:
+
+```powershell
+docker compose up --build
+```
+
+See `docs/deployment.md` for environment variables and production notes.
+
 Embed script:
 
 ```html
