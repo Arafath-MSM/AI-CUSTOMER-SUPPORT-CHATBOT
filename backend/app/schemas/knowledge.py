@@ -50,6 +50,17 @@ class KnowledgeSummaryResponse(BaseModel):
     total_chunks: int
 
 
+class CompanySummary(BaseModel):
+    company_id: str
+    documents_count: int
+    total_chunks: int
+    latest_document_at: str | None = None
+
+
+class CompanyListResponse(BaseModel):
+    companies: list[CompanySummary]
+
+
 class KnowledgeDeleteResponse(BaseModel):
     document_id: str
     deleted: bool

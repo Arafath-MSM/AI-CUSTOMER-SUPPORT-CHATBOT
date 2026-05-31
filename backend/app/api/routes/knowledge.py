@@ -6,6 +6,7 @@ from pypdf import PdfReader
 
 from app.api.dependencies import require_admin_token
 from app.schemas.knowledge import (
+    CompanyListResponse,
     KnowledgeDeleteResponse,
     KnowledgeQueryRequest,
     KnowledgeQueryResponse,
@@ -17,11 +18,17 @@ from app.services.knowledge_service import (
     KnowledgeBaseError,
     delete_knowledge_document,
     index_text_document,
+    list_companies,
     list_knowledge_documents,
     query_knowledge_base,
 )
 
 router = APIRouter(dependencies=[Depends(require_admin_token)])
+
+
+@router.get("/companies", response_model=CompanyListResponse)
+async def companies() -> CompanyListResponse:
+    return list_companies()
 
 
 @router.post("/knowledge/text", response_model=KnowledgeUploadResponse)

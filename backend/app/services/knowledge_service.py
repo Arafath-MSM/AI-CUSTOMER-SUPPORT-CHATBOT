@@ -12,6 +12,8 @@ from openai import APIError, APITimeoutError, AsyncOpenAI
 
 from app.core.config import settings
 from app.schemas.knowledge import (
+    CompanyListResponse,
+    CompanySummary,
     KnowledgeDeleteResponse,
     KnowledgeDocumentSummary,
     KnowledgeMatch,
@@ -145,6 +147,48 @@ def list_knowledge_documents(company_id: str) -> KnowledgeSummaryResponse:
         documents=documents,
         total_chunks=total_chunks,
     )
+
+
+def list_companies() -> CompanyListResponse:
+    store = _read_store()
+    company_map: dict[str, dict[str, int | str | None]] = {}
+
+    for document in store["documents"]:
+        company_id = document.get("company_id")
+        if not company_id:
+            continue
+
+        company = company_map.setdefault(
+            company_id,
+            {
+                "documents_count": 0,
+                "total_chunks": 0,
+                "latest_document_at": None,
+            },
+        )
+        company["documents_count"] = int(company["documents_count"]) + 1
+        company["total_chunks"] = int(company["total_chunks"]) + int(
+            document.get("chunks_indexed", 0)
+        )
+
+        created_at = document.get("created_at")
+        latest = company["latest_document_at"]
+        if isinstance(created_at, str) and (latest is None or created_at > latest):
+            company["latest_document_at"] = created_at
+
+    companies = [
+        CompanySummary(
+            company_id=company_id,
+            documents_count=int(summary["documents_count"]),
+            total_chunks=int(summary["total_chunks"]),
+            latest_document_at=summary["latest_document_at"]
+            if isinstance(summary["latest_document_at"], str)
+            else None,
+        )
+        for company_id, summary in sorted(company_map.items())
+    ]
+
+    return CompanyListResponse(companies=companies)
 
 
 def delete_knowledge_document(document_id: str) -> KnowledgeDeleteResponse:
