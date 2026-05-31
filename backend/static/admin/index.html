@@ -46,7 +46,7 @@
 
       .tenant {
         display: grid;
-        gap: 8px;
+        gap: 10px;
       }
 
       label {
@@ -281,6 +281,8 @@
         <div class="tenant">
           <label for="companyId">Company ID</label>
           <input id="companyId" value="demo-company" />
+          <label for="adminToken">Admin Token</label>
+          <input id="adminToken" type="password" placeholder="dev-admin-token" autocomplete="off" />
           <button id="refreshButton" type="button">Refresh</button>
         </div>
       </aside>
@@ -371,6 +373,7 @@
       const apiBaseUrl = window.location.origin;
       const els = {
         companyId: document.getElementById("companyId"),
+        adminToken: document.getElementById("adminToken"),
         refreshButton: document.getElementById("refreshButton"),
         statusText: document.getElementById("statusText"),
         notice: document.getElementById("notice"),
@@ -399,6 +402,7 @@ Support Hours: Customer support is available Monday to Friday, 9 AM to 6 PM Gulf
       init();
 
       function init() {
+        els.adminToken.value = localStorage.getItem("aiSupportAdminToken") || "dev-admin-token";
         syncCompanyFields();
         refreshKnowledge();
         renderEmbedSnippet();
@@ -406,6 +410,9 @@ Support Hours: Customer support is available Monday to Friday, 9 AM to 6 PM Gulf
         els.companyId.addEventListener("input", () => {
           syncCompanyFields();
           renderEmbedSnippet();
+        });
+        els.adminToken.addEventListener("input", () => {
+          localStorage.setItem("aiSupportAdminToken", adminToken());
         });
         els.refreshButton.addEventListener("click", refreshKnowledge);
         els.fillSampleButton.addEventListener("click", fillSample);
@@ -599,12 +606,21 @@ Support Hours: Customer support is available Monday to Friday, 9 AM to 6 PM Gulf
       }
 
       async function request(path, options) {
-        const response = await fetch(`${apiBaseUrl}${path}`, options);
+        const requestOptions = withAdminHeaders(options);
+        const response = await fetch(`${apiBaseUrl}${path}`, requestOptions);
         const data = await response.json();
         if (!response.ok) {
           throw new Error(data.detail || "Request failed.");
         }
         return data;
+      }
+
+      function withAdminHeaders(options) {
+        const requestOptions = { ...(options || {}) };
+        const headers = new Headers(requestOptions.headers || {});
+        headers.set("X-Admin-Token", adminToken());
+        requestOptions.headers = headers;
+        return requestOptions;
       }
 
       async function withBusy(button, label, task) {
@@ -633,6 +649,10 @@ Support Hours: Customer support is available Monday to Friday, 9 AM to 6 PM Gulf
 
       function companyId() {
         return els.companyId.value.trim() || "default";
+      }
+
+      function adminToken() {
+        return els.adminToken.value.trim();
       }
 
       function setStatus(text) {

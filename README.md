@@ -34,6 +34,7 @@ To enable live AI answers, create `backend\.env` from `backend\.env.example` and
 ```powershell
 OPENAI_API_KEY="your_api_key_here"
 OPENAI_MODEL="gpt-5.5"
+ADMIN_API_TOKEN="change-this-token"
 ```
 
 Then open:
@@ -44,10 +45,18 @@ Then open:
 
 ## RAG MVP Endpoints
 
-- `POST /api/knowledge/text` indexes raw text content.
-- `POST /api/upload` indexes `.txt`, `.md`, `.csv`, `.json`, `.html`, or `.pdf` files.
-- `POST /api/query` retrieves the most relevant knowledge chunks.
-- `POST /api/chat` answers with retrieved company context when available.
+- Public: `POST /api/chat` answers with retrieved company context when available.
+- Admin: `GET /api/admin/status` checks protected admin configuration.
+- Admin: `POST /api/knowledge/text` indexes raw text content.
+- Admin: `POST /api/upload` indexes `.txt`, `.md`, `.csv`, `.json`, `.html`, or `.pdf` files.
+- Admin: `POST /api/query` retrieves the most relevant knowledge chunks.
+- Admin: `DELETE /api/knowledge/{document_id}` deletes a document and its indexed chunks.
+
+Admin endpoints require:
+
+```text
+X-Admin-Token: your_admin_token
+```
 
 ## Website Widget
 
@@ -58,6 +67,8 @@ Demo page:
 Admin dashboard:
 
 - `http://127.0.0.1:8000/static/admin/index.html`
+
+The local development admin token defaults to `dev-admin-token`. Change `ADMIN_API_TOKEN` before deployment.
 
 Embed script:
 

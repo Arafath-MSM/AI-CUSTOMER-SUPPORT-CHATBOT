@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import truststore
 
-from app.api.routes import chat, health, knowledge
+from app.api.routes import admin, chat, health, knowledge
 from app.core.config import BACKEND_DIR, settings
 
 truststore.inject_into_ssl()
@@ -25,6 +25,7 @@ def create_app() -> FastAPI:
     )
 
     app.include_router(health.router, prefix=settings.api_prefix, tags=["health"])
+    app.include_router(admin.router, prefix=settings.api_prefix, tags=["admin"])
     app.include_router(chat.router, prefix=settings.api_prefix, tags=["chat"])
     app.include_router(knowledge.router, prefix=settings.api_prefix, tags=["knowledge"])
     app.mount("/static", StaticFiles(directory=BACKEND_DIR / "static"), name="static")

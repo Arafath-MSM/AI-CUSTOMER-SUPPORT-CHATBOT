@@ -1,9 +1,10 @@
 from io import BytesIO
 from pathlib import Path
 
-from fastapi import APIRouter, File, Form, HTTPException, Query, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
 from pypdf import PdfReader
 
+from app.api.dependencies import require_admin_token
 from app.schemas.knowledge import (
     KnowledgeDeleteResponse,
     KnowledgeQueryRequest,
@@ -20,7 +21,7 @@ from app.services.knowledge_service import (
     query_knowledge_base,
 )
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_admin_token)])
 
 
 @router.post("/knowledge/text", response_model=KnowledgeUploadResponse)
