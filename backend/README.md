@@ -7,6 +7,7 @@ FastAPI backend for the AI Customer Support Chatbot SaaS project.
 - `GET /api/health` checks service status.
 - `POST /api/chat` accepts a user message and returns an LLM response when `OPENAI_API_KEY` is configured.
 - `GET /api/admin/status` checks protected admin configuration.
+- `GET /api/companies` lists companies that have indexed documents.
 - `POST /api/knowledge/text` indexes raw text into the local knowledge base.
 - `POST /api/upload` indexes supported text/PDF files.
 - `POST /api/query` retrieves top matching knowledge chunks.

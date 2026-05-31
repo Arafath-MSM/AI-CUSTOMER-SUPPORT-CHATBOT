@@ -49,6 +49,46 @@
         gap: 10px;
       }
 
+      .company-list {
+        display: grid;
+        gap: 8px;
+        margin-top: 22px;
+      }
+
+      .company-list h2 {
+        color: #ffffff;
+        font-size: 13px;
+        margin: 0 0 2px;
+      }
+
+      .company-row {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 8px;
+        color: #ffffff;
+        cursor: pointer;
+        display: grid;
+        gap: 3px;
+        padding: 10px;
+        text-align: left;
+      }
+
+      .company-row.active,
+      .company-row:hover {
+        background: rgba(20, 99, 255, 0.35);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .company-row strong {
+        font-size: 13px;
+        overflow-wrap: anywhere;
+      }
+
+      .company-row span {
+        color: #b7c4d7;
+        font-size: 12px;
+      }
+
       label {
         color: #465265;
         display: block;
@@ -285,6 +325,10 @@
           <input id="adminToken" type="password" placeholder="dev-admin-token" autocomplete="off" />
           <button id="refreshButton" type="button">Refresh</button>
         </div>
+        <div class="company-list">
+          <h2>Companies</h2>
+          <div id="companiesList" class="company-list"></div>
+        </div>
       </aside>
 
       <main>
@@ -389,6 +433,7 @@
         queryButton: document.getElementById("queryButton"),
         chatButton: document.getElementById("chatButton"),
         queryResults: document.getElementById("queryResults"),
+        companiesList: document.getElementById("companiesList"),
         documentsList: document.getElementById("documentsList"),
         chatAnswer: document.getElementById("chatAnswer"),
         embedSnippet: document.getElementById("embedSnippet"),
@@ -404,7 +449,7 @@ Support Hours: Customer support is available Monday to Friday, 9 AM to 6 PM Gulf
       function init() {
         els.adminToken.value = localStorage.getItem("aiSupportAdminToken") || "dev-admin-token";
         syncCompanyFields();
-        refreshKnowledge();
+        refreshAll();
         renderEmbedSnippet();
 
         els.companyId.addEventListener("input", () => {
@@ -414,13 +459,27 @@ Support Hours: Customer support is available Monday to Friday, 9 AM to 6 PM Gulf
         els.adminToken.addEventListener("input", () => {
           localStorage.setItem("aiSupportAdminToken", adminToken());
         });
-        els.refreshButton.addEventListener("click", refreshKnowledge);
+        els.refreshButton.addEventListener("click", refreshAll);
         els.fillSampleButton.addEventListener("click", fillSample);
         els.uploadTextButton.addEventListener("click", uploadText);
         els.uploadFileButton.addEventListener("click", uploadFile);
         els.queryButton.addEventListener("click", queryKnowledge);
         els.chatButton.addEventListener("click", askChatbot);
         els.copyEmbedButton.addEventListener("click", copyEmbed);
+      }
+
+      async function refreshAll() {
+        await refreshCompanies();
+        await refreshKnowledge();
+      }
+
+      async function refreshCompanies() {
+        try {
+          const data = await request("/api/companies");
+          renderCompanies(data.companies || []);
+        } catch (error) {
+          els.companiesList.innerHTML = `<div class="meta">Enter a valid admin token and refresh.</div>`;
+        }
       }
 
       async function refreshKnowledge() {
@@ -456,7 +515,7 @@ Support Hours: Customer support is available Monday to Friday, 9 AM to 6 PM Gulf
           showNotice(`Indexed ${data.chunks_indexed} chunk(s) for ${data.title}.`);
           els.textTitle.value = "";
           els.textContent.value = "";
-          await refreshKnowledge();
+          await refreshAll();
         });
       }
 
@@ -480,7 +539,7 @@ Support Hours: Customer support is available Monday to Friday, 9 AM to 6 PM Gulf
           showNotice(`Indexed ${data.chunks_indexed} chunk(s) for ${data.title}.`);
           els.fileTitle.value = "";
           els.fileInput.value = "";
-          await refreshKnowledge();
+          await refreshAll();
         });
       }
 
@@ -533,7 +592,35 @@ Support Hours: Customer support is available Monday to Friday, 9 AM to 6 PM Gulf
             method: "DELETE",
           });
           showNotice("Document deleted.");
-          await refreshKnowledge();
+          await refreshAll();
+        });
+      }
+
+      function renderCompanies(companies) {
+        if (!companies.length) {
+          els.companiesList.innerHTML = `<div class="meta">No companies indexed yet.</div>`;
+          return;
+        }
+
+        els.companiesList.innerHTML = companies
+          .map(
+            (company) => `
+              <button class="company-row ${company.company_id === companyId() ? "active" : ""}" type="button" data-company="${escapeHtml(company.company_id)}">
+                <strong>${escapeHtml(company.company_id)}</strong>
+                <span>${company.documents_count} document(s) · ${company.total_chunks} chunk(s)</span>
+              </button>
+            `
+          )
+          .join("");
+
+        els.companiesList.querySelectorAll("[data-company]").forEach((button) => {
+          button.addEventListener("click", async () => {
+            els.companyId.value = button.dataset.company;
+            syncCompanyFields();
+            renderEmbedSnippet();
+            await refreshKnowledge();
+            renderCompanies(companies);
+          });
         });
       }
 

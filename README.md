@@ -47,6 +47,7 @@ Then open:
 
 - Public: `POST /api/chat` answers with retrieved company context when available.
 - Admin: `GET /api/admin/status` checks protected admin configuration.
+- Admin: `GET /api/companies` lists companies that have indexed documents.
 - Admin: `POST /api/knowledge/text` indexes raw text content.
 - Admin: `POST /api/upload` indexes `.txt`, `.md`, `.csv`, `.json`, `.html`, or `.pdf` files.
 - Admin: `POST /api/query` retrieves the most relevant knowledge chunks.
@@ -69,6 +70,7 @@ Admin dashboard:
 - `http://127.0.0.1:8000/static/admin/index.html`
 
 The local development admin token defaults to `dev-admin-token`. Change `ADMIN_API_TOKEN` before deployment.
+The dashboard sidebar shows companies after at least one document has been indexed for them.
 
 ## Deployment
 
