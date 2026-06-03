@@ -15,7 +15,7 @@ async def admin_status() -> AdminStatusResponse:
         openai_configured=settings.has_openai_api_key,
         chat_model=settings.openai_model,
         embedding_model=settings.openai_embedding_model,
-        rag_top_k=settings.rag_top_k,
+        rag_top_k=settings.rag_top_k, 
         rag_chunk_size=settings.rag_chunk_size,
         rag_chunk_overlap=settings.rag_chunk_overlap,
     )
