@@ -6,7 +6,7 @@ from app.schemas.admin import AdminStatusResponse
 
 router = APIRouter(dependencies=[Depends(require_admin_token)])
 
-
+ 
 @router.get("/admin/status", response_model=AdminStatusResponse)
 async def admin_status() -> AdminStatusResponse:
     return AdminStatusResponse(
