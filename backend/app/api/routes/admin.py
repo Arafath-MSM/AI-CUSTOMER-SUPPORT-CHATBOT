@@ -8,7 +8,7 @@ router = APIRouter(dependencies=[Depends(require_admin_token)])
 
  
 @router.get("/admin/status" , response_model=AdminStatusResponse)
-async def admin_status() -> AdminStatusResponse:
+async def admin_status() -> AdminStatusResponse: 
     return AdminStatusResponse(
         status="ok",
         app_env=settings.app_env,
