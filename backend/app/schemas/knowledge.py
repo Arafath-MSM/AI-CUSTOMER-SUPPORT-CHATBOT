@@ -18,7 +18,7 @@ class KnowledgeUploadResponse(BaseModel):
 class KnowledgeQueryRequest(BaseModel):
     query: str = Field(..., min_length=1, max_length=4000)
     company_id: str = Field(default="default", min_length=1, max_length=100)
-    top_k: int | None = Field(default=None, ge=1, le=10)
+    top_k: int | None = Field(default=None, ge=1, le=10) 
 
 
 class KnowledgeMatch(BaseModel):
